@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">ChatApp</string>
+    <string name="chat">CHATS</string>
+    <string name="status">GROUPS</string>
+    <string name="contacts">CONTACTS</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_Chat_Fragment">Chat Fragment</string>
+    <string name="hello_groups_Fragment">Groups_Fragment</string>
+    <string name="hello_contacts_fragment">Contacts Fragment</string>
+
+    <string name="hintemail">Email</string>
+    <string name="hintpassword">Password</string>
+    <string name="loginbutton">Login</string>
+    <string name="Phonebutton">Phone</string>
+
+    <string name="forgetPassword">Forget Password</string>
+    <string name="neednewaccount">Need new Account ?</string>
+    <string name="loginusingyour">or Login using your</string>
+    <string name="createaccount">Create Account</string>
+    <string name="AlreadyHaveAccount">Already Have Account ?</string>
+
+    <string name="warning">Please Fill All The Field Mentioned Above</string>
+    <string name="successful_Task">Account Created Successfully</string>
+    <string name="progressbartitle">Creating New Account</string>
+    <string name="waitmeassage">Please Wait,While We are Creating New Account For You....</string>
+
+    <string name="Loggedin">Logged in Successfuly</string>
+    <string name="signin">Sign In</string>
+    <string name="pleasewait">Please Wait</string>
+
+    <!---Items for menu-->
+
+    <string name="findfriends">Find Friends</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="CreateGroup">Create Group</string>
+
+    <string name="available">hey,i am available now</string>
+    <string name="settings_update_request">Please fill your user name and status to continue</string>
+
+    <!--Items for alert dialog-->
+    <string name="title_alertdialog">Enter Group Name :</string>
+    <string name="dialog_edit_Text">e.g Family Friends</string>
+
+    <!--Items for Firebase-->
+    <string name="firebase_group">Group</string>
+    <string name="type_yout_message">Type Your Message Here....</string>
+
+</resources>
