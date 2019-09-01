@@ -32,7 +32,7 @@
                 android:textColor="@android:color/background_dark"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"
-                android:layout_marginBottom="50dp"/>
+                android:layout_marginBottom="60dp"/>
         </LinearLayout>
     </ScrollView>
 
@@ -48,7 +48,6 @@
             android:id="@+id/type_message"
             android:layout_height="50dp"
             android:hint="@string/type_yout_message"
-            android:background="@drawable/edittext"
             android:padding="17dp"/>
 
         <ImageButton
