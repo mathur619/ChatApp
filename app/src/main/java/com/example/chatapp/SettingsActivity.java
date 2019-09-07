@@ -1,18 +1,21 @@
 package com.example.chatapp;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.NavUtils;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,15 +25,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private EditText username,userstatus;
+    private ImageView profile_image;
     private Button SavePreference;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference Rootref;
+    private static final int GalleryPicker=123;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +124,36 @@ public class SettingsActivity extends AppCompatActivity {
 
             }
         });
+
+        profile_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent=new Intent();
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(intent,GalleryPicker);
+            }
+        });
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==GalleryPicker && resultCode==RESULT_OK  && data!=null)
+        {
+           Uri Imageuri=data.getData();
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1,1)
+                    .start(this);
+
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+        }
     }
 
     private void SendUserToMainActivity()
@@ -131,6 +168,7 @@ public class SettingsActivity extends AppCompatActivity {
         username=(EditText)findViewById(R.id.set_user_name);
         userstatus=(EditText)findViewById(R.id.set_user_status);
         SavePreference=(Button)findViewById(R.id.save_preference);
+        profile_image=(ImageView)findViewById(R.id.set_profile_image);
     }
 
     @Override
