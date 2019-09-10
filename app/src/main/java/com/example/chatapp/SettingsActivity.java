@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +26,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
@@ -38,15 +43,19 @@ public class SettingsActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private DatabaseReference Rootref;
     private static final int GalleryPicker=123;
+    private String downloadurl;
+    private StorageReference mstorageref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Profile");
         //Initializing Firebase
 
         firebaseAuth=FirebaseAuth.getInstance();
         Rootref=FirebaseDatabase.getInstance().getReference();
+        mstorageref= FirebaseStorage.getInstance().getReference().child("Profileimage");
 
         //Initializing views
         Initializeviews();
@@ -68,6 +77,8 @@ public class SettingsActivity extends AppCompatActivity {
                  {
                     username.setText(dataSnapshot.child("name").getValue().toString());
                     userstatus.setText(dataSnapshot.child("status").getValue().toString());
+                    downloadurl=dataSnapshot.child("image").getValue().toString();
+                     Picasso.get().load(downloadurl).fit().into(profile_image);
                  }
                  else if(dataSnapshot.exists() && dataSnapshot.child("name").exists())
                  {
@@ -95,7 +106,7 @@ public class SettingsActivity extends AppCompatActivity {
                 String Status=userstatus.getText().toString();
                 String CurrentUserId=firebaseAuth.getCurrentUser().getUid();
 
-                if(TextUtils.isEmpty(Name) && TextUtils.isEmpty(Status))
+                if(TextUtils.isEmpty(Name) && TextUtils.isEmpty(Status) && downloadurl!=null)
                 {
                     Toast.makeText(SettingsActivity.this,getString(R.string.warning),Toast.LENGTH_SHORT).show();
                 }
@@ -105,6 +116,7 @@ public class SettingsActivity extends AppCompatActivity {
                     Data.put("name",Name);
                     Data.put("status",Status);
                     Data.put("uid",CurrentUserId);
+                    Data.put("image",downloadurl);
 
                     Rootref.child("User").child(CurrentUserId).setValue(Data).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
@@ -153,6 +165,25 @@ public class SettingsActivity extends AppCompatActivity {
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
+
+            if(resultCode == RESULT_OK)
+            {
+                Uri resultUri=result.getUri();
+
+                final StorageReference Filepath=mstorageref.child(firebaseAuth.getCurrentUser().getUid() + ".jpeg");
+                Filepath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Filepath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                downloadurl=uri.toString();
+                                Picasso.get().load(downloadurl).fit().into(profile_image);
+                            }
+                        });
+                    }
+                });
+            }
         }
     }
 

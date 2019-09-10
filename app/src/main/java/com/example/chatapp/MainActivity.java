@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
         switch (id)
         {
             case R.id.menu_find_friends:
+                Intent Friendsintent=new Intent(MainActivity.this,FriendsActivity.class);
+                startActivity(Friendsintent);
                 break;
             case R.id.menu_settings_option:
                 Intent intent=new Intent(MainActivity.this,SettingsActivity.class);
