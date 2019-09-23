@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         tablayout.addTab(tablayout.newTab().setText(getString(R.string.chat)));
         tablayout.addTab(tablayout.newTab().setText(getString(R.string.status)));
         tablayout.addTab(tablayout.newTab().setText(getString(R.string.contacts)));
+        tablayout.addTab(tablayout.newTab().setText("Requests"));
         tablayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final MyAdapter adapter=new MyAdapter(this,getSupportFragmentManager(),tablayout.getTabCount());

@@ -25,6 +25,9 @@ public class MyAdapter extends FragmentPagerAdapter {
                 return new GroupFragment();
             case 2:
                 return new ContactsFragment();
+
+            case 3:
+                return new RequestFragment();
             default:
                 return null;
         }

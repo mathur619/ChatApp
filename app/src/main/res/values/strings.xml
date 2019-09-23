@@ -47,4 +47,7 @@
     <string name="firebase_group">Group</string>
     <string name="type_yout_message">Type Your Message Here....</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
