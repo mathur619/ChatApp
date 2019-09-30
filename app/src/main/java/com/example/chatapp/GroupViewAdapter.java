@@ -44,6 +44,7 @@ public class GroupViewAdapter extends RecyclerView.Adapter<GroupViewAdapter.Grou
 
     @Override
     public int getItemCount() {
+
         if (GroupTitle==null)
         {
             return 0;

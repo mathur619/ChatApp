@@ -76,8 +76,8 @@
                     android:textSize="16sp"
                     android:textColor="#ffffff"
                     android:textAllCaps="false"
-                    android:background="@android:color/red"
-                    android:visibility="gone"/>
+                    android:background="#FF0000"
+                    android:visibility="invisible"/>
             </LinearLayout>
 
         </LinearLayout>
