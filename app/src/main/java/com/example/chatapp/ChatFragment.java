@@ -1,5 +1,6 @@
 package com.example.chatapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -73,13 +74,14 @@ public class ChatFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final ChatViewHolder chatViewHolder, int i, @NonNull Contacts contacts) {
                final String userid=getRef(i).getKey();
+                final String[] retimage = {"defauttImage"};
                UsersRef.child(userid).addValueEventListener(new ValueEventListener() {
                    @Override
                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                        if(dataSnapshot.hasChild("image"))
                        {
-                           final String retimage=dataSnapshot.child("image").getValue().toString();
-                           Picasso.get().load(retimage).placeholder(R.drawable.profile_image).fit().into(chatViewHolder.profile_photo);
+                           retimage[0] =dataSnapshot.child("image").getValue().toString();
+                           Picasso.get().load(retimage[0]).placeholder(R.drawable.profile_image).fit().into(chatViewHolder.profile_photo);
 
                        }
 
@@ -88,6 +90,19 @@ public class ChatFragment extends Fragment {
 
                        chatViewHolder.username.setText(name);
                        chatViewHolder.status.setText("Last Seen: " + "\n" + "Date " +" Time");
+
+
+                       chatViewHolder.itemview.setOnClickListener(new View.OnClickListener() {
+                           @Override
+                           public void onClick(View v) {
+                               Intent intent=new Intent(getContext(),ChatActivity.class);
+                               intent.putExtra("visit_user_id",userid);
+                               intent.putExtra("visit_user_name",name);
+                               intent.putExtra("visit_user_image",retimage[0]);
+                               startActivity(intent);
+
+                           }
+                       });
                    }
 
                    @Override
@@ -113,10 +128,12 @@ public class ChatFragment extends Fragment {
 
     public static class ChatViewHolder extends RecyclerView.ViewHolder {
         private TextView username;
+        private View itemview;
         private CircleImageView profile_photo;
         private TextView status;
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
+            this.itemview=itemView;
 
             username = (itemView).findViewById(R.id.user_name);
             status = (itemView).findViewById(R.id.user_status);
