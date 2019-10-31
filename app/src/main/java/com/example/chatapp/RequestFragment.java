@@ -88,8 +88,7 @@ public class RequestFragment extends Fragment {
 
             @Override
             protected void onBindViewHolder(@NonNull final RequestViewHolder requestViewHolder, int i, @NonNull Contacts contacts) {
-                requestViewHolder.Accept.setVisibility(View.VISIBLE);
-                requestViewHolder.Cancel.setVisibility(View.VISIBLE);
+
 
                 final String list_User_Id = getRef(i).getKey();
 
@@ -101,6 +100,11 @@ public class RequestFragment extends Fragment {
                             String type = dataSnapshot.getValue().toString();
 
                             if (type.equals("received")) {
+                                requestViewHolder.username.setVisibility(View.VISIBLE);
+                                requestViewHolder.userstatus.setVisibility(View.VISIBLE);
+                                requestViewHolder.userprofilephoto.setVisibility(View.VISIBLE);
+                                requestViewHolder.Accept.setVisibility(View.VISIBLE);
+                                requestViewHolder.Cancel.setVisibility(View.VISIBLE);
                                 UserRef.child(list_User_Id).addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
@@ -226,6 +230,11 @@ public class RequestFragment extends Fragment {
             userprofilephoto = (itemView).findViewById(R.id.users_profile_image);
             Accept = (itemView).findViewById(R.id.request_accept_btn);
             Cancel = (itemView).findViewById(R.id.request_cancel_btn);
+            Accept.setVisibility(View.GONE);
+            Cancel.setVisibility(View.GONE);
+            username.setVisibility(View.GONE);
+            userstatus.setVisibility(View.GONE);
+            userprofilephoto.setVisibility(View.GONE);
         }
     }
 }
