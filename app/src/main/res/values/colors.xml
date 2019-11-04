@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#005048</color>
     <color name="colorAccent">#E6E6E6</color>
     <color name="sender">#DBFEBA</color>
+    <color name="whatsapp_background">#EEE7DE</color>
 </resources>

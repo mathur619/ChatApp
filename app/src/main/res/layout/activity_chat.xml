@@ -18,30 +18,36 @@
             android:layout_height="match_parent"
             android:layout_below="@+id/chat_toolbar"
             android:layout_above="@+id/mylinearlayout"
-            android:background="@android:color/darker_gray">
+            android:background="@color/whatsapp_background">
         </androidx.recyclerview.widget.RecyclerView>
 
 
     <RelativeLayout
         android:id="@+id/mylinearlayout"
+        android:background="@color/whatsapp_background"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_height="wrap_content">
 
         <EditText
-            android:layout_width="370dp"
+            android:padding="5dp"
+            android:inputType="textMultiLine"
+            android:layout_width="wrap_content"
+            android:layout_toLeftOf="@+id/snd_message_button"
+            android:layout_toStartOf="@+id/snd_message_button"
             android:id="@+id/type_message_edit"
             android:layout_height="50dp"
             android:hint="@string/type_yout_message"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:padding="17dp"/>
+            android:background="@drawable/edit_text_ad"/>
 
         <ImageButton
-            android:layout_width="50dp"
+            android:layout_width="wrap_content"
             android:id="@+id/snd_message_button"
             android:layout_height="wrap_content"
-            android:src="@drawable/send_message"
+            android:src="@drawable/ic_send_black_24dp"
+            android:background="@drawable/circle"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             />

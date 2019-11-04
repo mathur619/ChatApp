@@ -79,35 +79,58 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        Roorref.child("Messages").child(messagesenderid).child(messagereceiverid).addChildEventListener(new ChildEventListener() {
+        AsyncTask<Void,Void,Void> lst=new AsyncTask<Void, Void, Void>() {
+
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("ChatActivity",dataSnapshot.child("message").getValue().toString());
-                Messages messages=new Messages(dataSnapshot.child("from").getValue().toString(),dataSnapshot.child("message").getValue().toString(),dataSnapshot.child("type").getValue().toString());
-                messagesList.add(messages);
-                messageAdapter.notifyDataSetChanged();
+            protected Void doInBackground(Void... voids) {
+                Roorref.child("Messages").child(messagesenderid).child(messagereceiverid).addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        Log.d("ChatActivity",dataSnapshot.child("message").getValue().toString());
+                        Messages messages=new Messages(dataSnapshot.child("from").getValue().toString(),dataSnapshot.child("message").getValue().toString(),dataSnapshot.child("type").getValue().toString());
+                        messagesList.add(messages);
+                        messageAdapter.notifyDataSetChanged();
+                        privatemessages.smoothScrollToPosition(privatemessages.getAdapter().getItemCount());
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                return null;
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
 
             }
+        };
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+        lst.execute();
 
-            }
+    }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+    @Override
+    protected void onPause() {
+        super.onPause();
+        messagesList.clear();
     }
 
     private void sendmessage() {
