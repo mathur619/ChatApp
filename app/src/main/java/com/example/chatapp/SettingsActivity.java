@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -112,11 +113,13 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    String Devicetoken= FirebaseInstanceId.getInstance().getToken();
                     HashMap<String,String>Data=new HashMap<>();
                     Data.put("name",Name);
                     Data.put("status",Status);
                     Data.put("uid",CurrentUserId);
                     Data.put("image",downloadurl);
+                    Data.put("device_token",Devicetoken);
 
                     Rootref.child("User").child(CurrentUserId).setValue(Data).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override

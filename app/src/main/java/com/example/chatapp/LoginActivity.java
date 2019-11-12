@@ -17,6 +17,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class LoginActivity extends AppCompatActivity {
     private Button LoginButton,PhoneLogin;
@@ -24,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView forgetpassword,NewAccount;
     private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
+    private DatabaseReference Userref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
 
         FirebaseApp.initializeApp(this);
         firebaseAuth=FirebaseAuth.getInstance();
+        Userref= FirebaseDatabase.getInstance().getReference().child("User");
 
         //Intitalizing Views
         initializeviews();
@@ -73,10 +78,19 @@ public class LoginActivity extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if(task.isSuccessful())
                                     {
-
-                                      SendUserToMainActivity();
-                                      Toast.makeText(LoginActivity.this,getString(R.string.Loggedin),Toast.LENGTH_SHORT).show();
-                                      progressDialog.dismiss();
+                                        String current_user_id=firebaseAuth.getCurrentUser().getUid();
+                                        String Devicetoken= FirebaseInstanceId.getInstance().getToken();
+                                        Userref.child(current_user_id).child("device_token").setValue(Devicetoken).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful())
+                                                {
+                                                    SendUserToMainActivity();
+                                                    Toast.makeText(LoginActivity.this,getString(R.string.Loggedin),Toast.LENGTH_SHORT).show();
+                                                    progressDialog.dismiss();
+                                                }
+                                            }
+                                        });
                                     }
                                     else
                                     {
