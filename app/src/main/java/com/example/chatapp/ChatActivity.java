@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,10 +33,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -53,6 +64,12 @@ public class ChatActivity extends AppCompatActivity {
     private List<Messages>messagesList=new ArrayList<>();
     private MessageAdapter messageAdapter;
 
+    private byte encryptionKey[]= {9,115,51,86,105,4,-31,-23,-68,88,17,20,3,-105,119,-53};
+    private Cipher cipher,decipher;
+    private SecretKeySpec secretKeySpec;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +81,18 @@ public class ChatActivity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         Roorref= FirebaseDatabase.getInstance().getReference();
         messagesenderid=mAuth.getCurrentUser().getUid();
+
+        try {
+            cipher = Cipher.getInstance("AES");
+            decipher = Cipher.getInstance("AES");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+
+        secretKeySpec= new SecretKeySpec(encryptionKey, "AES");
+
 
         InitializeControllers();
 
@@ -79,15 +108,20 @@ public class ChatActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        AsyncTask<Void,Void,Void> lst=new AsyncTask<Void, Void, Void>() {
+        @SuppressLint("StaticFieldLeak") AsyncTask<Void,Void,Void> lst=new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... voids) {
                 Roorref.child("Messages").child(messagesenderid).child(messagereceiverid).addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        Log.d("ChatActivity",dataSnapshot.child("message").getValue().toString());
-                        Messages messages=new Messages(dataSnapshot.child("from").getValue().toString(),dataSnapshot.child("message").getValue().toString(),dataSnapshot.child("type").getValue().toString());
+                        String actual_message= dataSnapshot.child("message").getValue().toString();
+                        actual_message= actual_message.substring(1,actual_message.length()-1);
+                        String decryptedMessage=AESDecryptionMethod(actual_message);
+                        Log.d("ChatActivity",decryptedMessage);
+
+                        Messages messages=new Messages(dataSnapshot.child("from").getValue().toString(),decryptedMessage,dataSnapshot.child("type").getValue().toString());
+
                         messagesList.add(messages);
                         messageAdapter.notifyDataSetChanged();
                         privatemessages.smoothScrollToPosition(privatemessages.getAdapter().getItemCount());
@@ -133,8 +167,60 @@ public class ChatActivity extends AppCompatActivity {
         messagesList.clear();
     }
 
+    private String AESEncryptionMethod(String string){
+        byte[] stringByte= string.getBytes();
+        byte[] encryptedByte= new byte[stringByte.length];
+
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE,secretKeySpec);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        try {
+            encryptedByte = cipher.doFinal(stringByte);
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+
+        String returnString= null;
+        try {
+            returnString= new String(encryptedByte,"utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return returnString;
+    }
+
+    private String AESDecryptionMethod(String string){
+        byte[] EncryptedByte= string.getBytes(StandardCharsets.UTF_8);
+        String decryptedString= null;
+
+        byte[] decryption = new byte[EncryptedByte.length];
+
+        try {
+            decipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
+
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        try{
+            decryption= decipher.doFinal(EncryptedByte);
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+
+        decryptedString= new String(decryption).substring(string.length());
+
+        return string;
+    }
+
+
     private void sendmessage() {
-        String Messagetext=messagetext.getText().toString();
+        String Messagetext = AESEncryptionMethod(messagetext.getText().toString());
 
         if(TextUtils.isEmpty(Messagetext))
         {
